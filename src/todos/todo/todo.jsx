@@ -11,6 +11,11 @@ class Todo extends React.Component {
             todo: props.todo
         }
     }
+    componentDidMount() {
+        // TodosService.fetchAll().then(todos => {
+        //     this.setState({todos})
+        // })
+    }
     onCheck = () => {
         TodosService.check(this.state.todo._id, !this.state.todo.complete).then(res => {
             this.setState({

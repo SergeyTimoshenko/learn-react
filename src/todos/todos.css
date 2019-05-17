@@ -1,7 +1,8 @@
 .todos-wrap {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: azure;
+    display: flex;
+    margin-top: 20px;
+    overflow: auto;
+    margin-bottom: 20px;
 }
 .todo-wrap {
     display: flex;
