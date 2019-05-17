@@ -1,14 +1,21 @@
 import React from 'react';
 import Header from '../header/Header';
 import ToDos from '../todos/ToDos';
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 class Root extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-          name: 'Home'
+        let name = '';
+        switch (props.location.pathname) {
+            case '/todo':
+                name = 'ToDo'
+                break;
+            default:
+                name = 'Home';
+                break;
         }
+        this.state = {name}
       }
       
       nav = (to) => {
@@ -25,7 +32,10 @@ class Root extends React.Component {
       render () {
         return (
           <div>
-            <Header push={this.props.history.push} name={this.state.name} nav={this.nav}></Header>
+            <Header 
+                push={this.props.history.push} 
+                name={this.state.name} 
+                nav={this.nav}></Header>
             <Switch>
               <Route path="/" exact component={this.Home}/>
               <Route path="/todo" component={ToDos} />
