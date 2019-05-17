@@ -14,9 +14,14 @@ const put = (path, data) => {
     return axios.put(`${API}/${path}`, data);
 }
 
+const del = (path) => {
+    return axios.delete(`${API}/${path}`)
+}
+
 const api = {
     post,
     get,
-    put
+    put,
+    del
 }
 export default api; 

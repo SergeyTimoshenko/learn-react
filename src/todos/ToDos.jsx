@@ -30,8 +30,6 @@ class ToDos extends React.Component {
             isInput: false
         })
         TodosService.create(this.state.input).then(res => {
-            console.log(res)
-            console.log(this.state.todos)
             this.setState({
                 input: '',
                 todos: [
@@ -50,6 +48,17 @@ class ToDos extends React.Component {
         this.setState({
             isInput: true
         })
+    }
+
+    onDelete = (id) => {
+        TodosService.del(id).then(res => {
+            this.setState({
+                todos: this.state.todos.filter(t => t._id !== id)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
+        
     }
 
     render() {
@@ -92,7 +101,7 @@ class ToDos extends React.Component {
                         {
                             this.state.todos.map((todo, index) => 
                                 <ListItem key={todo._id}>
-                                    <Todo todo={todo} />
+                                    <Todo todo={todo} delete={this.onDelete}/>
                                 </ListItem>
                             )
                         }

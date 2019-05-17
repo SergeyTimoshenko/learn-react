@@ -1,6 +1,8 @@
 import React from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
 import TodosService from '../../srvices/todos';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 class Todo extends React.Component {
     constructor(props) {
@@ -20,11 +22,18 @@ class Todo extends React.Component {
         })
         
     }
+    
     render() {
+        const { todo } = this.state;
         return (
-            <div>
-                <Checkbox checked={this.state.todo.complete} onChange={this.onCheck} />
-                {this.state.todo.name}
+            <div className="todo-wrap">
+                <Checkbox checked={todo.complete} onChange={this.onCheck} />
+                <div>{todo.name}</div>
+                <IconButton aria-label="Delete" style={{
+                    marginLeft: 'auto'
+                }} onClick={() => this.props.delete(todo._id)} >
+                    <DeleteIcon fontSize="small" />
+                </IconButton>
             </div>
         )
     }
