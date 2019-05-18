@@ -2,6 +2,7 @@ import React from 'react';
 import Header from '../header/Header';
 import ToDos from '../todos/ToDos';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Topics from '../topic/Topics';
 
 class Root extends React.Component {
     constructor(props) {
@@ -38,7 +39,7 @@ class Root extends React.Component {
                 nav={this.nav}></Header>
             <Switch>
               <Route path="/" exact component={this.Home}/>
-              <Route path="/todo" component={ToDos} />
+              <Route path="/todo" component={Topics} />
             </Switch>
           </div>
         );
