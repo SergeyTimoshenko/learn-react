@@ -41,13 +41,20 @@ class Topics extends React.Component {
         })
         
     }
-
+    onDelete = (id) => new Promise((resolve, reject) => {
+        TopicService.del(id).then(res => {
+            resolve(res)
+            this.setState({
+                topics: this.state.topics.filter(t => t._id !== id)
+            })
+        })
+    })
     render() {
         return (
             <div className="todos-wrap overflow">
                 {
                     this.state.topics.map(topic => 
-                        <Topic key={topic._id} topic={topic} />
+                        <Topic key={topic._id} topic={topic} onDelete={this.onDelete} />
                     )
                 }
                 <Card style={{

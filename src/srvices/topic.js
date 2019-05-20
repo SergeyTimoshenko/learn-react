@@ -15,10 +15,16 @@ const update = (id, params) => new Promise((resolve, reject) => {
     api.put(pathId, params).then(res => resolve(res.data)).catch(err => reject(err))
 })
 
+const del = (id) => new Promise((resolve, reject) => {
+    let pathId = `${path}/${id}`;
+    api.del(pathId).then(res => resolve(res.data)).catch(err => reject(err))
+})
+
 const TopicService = {
     create,
     fetchAll,
-    update
+    update,
+    del
 }
 
 export default TopicService

@@ -39,7 +39,11 @@ class Topic extends React.Component {
     }
 
     onDelete = () => {
-        console.log('yay')
+        this.props.onDelete(this.state.topic._id).then(res => {
+            console.log(res)
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
     render() {
