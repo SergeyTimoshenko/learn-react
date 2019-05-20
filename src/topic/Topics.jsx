@@ -5,6 +5,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import "../todos/todos.css";
+import TopicService from '../srvices/topic';
 
 class Topics extends React.Component {
     constructor(props) {
@@ -13,24 +14,34 @@ class Topics extends React.Component {
             topics: [],
             isNewColumnInput: false,
             newColumnInput: ''
-        }
+        } 
     }
-
+    componentDidMount() {
+        TopicService.fetchAll().then(topics => {
+            this.setState({topics})
+        })
+    }
     showNewColumn = () => {
         this.setState({
             isNewColumnInput: true,
             newColumnInput: ''
         })
     }
-
     onKey = (e) => {
-        if (e.key !== 'Enter') return
-        this.setState({
-            isNewColumnInput: false
+        if(e.key !== 'Enter') return
+        TopicService.create({title:this.state.newColumnInput}).then(topic => {
+            this.setState({
+                isNewColumnInput: false,
+                newColumnInput: '',
+                topics: [
+                    ...this.state.topics,
+                    topic
+                ]
+            })
         })
-        console.log(this.state.newColumnInput)
+        
     }
-
+    
     render() {
         return (
             <div className="todos-wrap">
