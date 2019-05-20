@@ -1,9 +1,11 @@
 .todos-wrap {
     display: flex;
     margin-top: 20px;
-    overflow: auto;
     margin-bottom: 20px;
     overflow: hidden;
+}
+.overflow {
+    overflow: auto
 }
 .todo-wrap {
     display: flex;

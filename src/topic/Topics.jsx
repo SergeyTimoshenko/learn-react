@@ -41,10 +41,10 @@ class Topics extends React.Component {
         })
         
     }
-    
+
     render() {
         return (
-            <div className="todos-wrap">
+            <div className="todos-wrap overflow">
                 {
                     this.state.topics.map(topic => 
                         <Topic key={topic._id} topic={topic} />

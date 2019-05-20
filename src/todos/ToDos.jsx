@@ -94,7 +94,7 @@ class ToDos extends React.Component {
                                         height: '30px',
                                         borderRadius: 7,
                                         border: '2px solid #3f51b5',
-                                        fontSize: 25,
+                                        fontSize: '1.5em',
                                         paddingLeft: 5
                                     }} 
                                     onChange={(e) => {this.setState({input:e.target.value})}}

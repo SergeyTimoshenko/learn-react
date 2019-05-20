@@ -32,7 +32,7 @@ class Todo extends React.Component {
         const { todo } = this.state;
         return (
             <div className="todo-wrap">
-                <Checkbox checked={todo.complete} onChange={this.onCheck} />
+                <Checkbox checked={todo.complete} color="primary" onChange={this.onCheck} />
                 <div>{todo.name}</div>
                 <IconButton aria-label="Delete" style={{
                     marginLeft: 'auto'
