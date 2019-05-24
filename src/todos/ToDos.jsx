@@ -5,8 +5,10 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
+import Link from '@material-ui/core/Link';
 import Todo from './todo/todo';
-
+import Modal from '@material-ui/core/Modal';
+import Typography from '@material-ui/core/Typography';
 import "./todos.css";
 
 import TodosService from '../srvices/todos';
@@ -21,7 +23,8 @@ class ToDos extends React.Component {
             input: '',
             isNewColumnInput: false,
             newColumnInput: '',
-            topic: props.topic
+            topic: props.topic,
+            modal: false
         }
     }
     componentDidMount() {
@@ -73,6 +76,13 @@ class ToDos extends React.Component {
     }
     
     
+    onCreateTask = () => {
+        console.log('yay')
+        this.setState({
+            modal: true
+        })
+    }
+
     render() {
         return (
             <div className="todos-wrap">
@@ -122,7 +132,26 @@ class ToDos extends React.Component {
                             )
                         }
                     </List>
+                    <Link style={{
+                        cursor: 'pointer'
+                    }} onClick={this.onCreateTask}>Create new task</Link>
                 </Card>
+                <Modal open={this.state.modal} onBackdropClick={() => {this.setState({modal:false})}}
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                >
+                    <div style={{
+                        position:'absolute',
+                        top:200,
+                        width: 300,
+                        left: 'calc(50vw - 150px)'
+                    }}>
+                        <Card>
+                            <p>ggg</p>
+                        </Card> 
+                    </div>
+                    
+                </Modal>
             </div>
         );
     }
