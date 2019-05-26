@@ -8,7 +8,8 @@ class Todo extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            todo: props.todo
+            todo: props.todo,
+            click: props.click
         }
     }
     componentDidMount() {
@@ -33,7 +34,7 @@ class Todo extends React.Component {
         return (
             <div className="todo-wrap">
                 <Checkbox checked={todo.complete} color="primary" onChange={this.onCheck} />
-                <div>{todo.name}</div>
+                <div style={{cursor: 'pointer'}} onClick={() => {this.state.click(this.state.todo)}}>{todo.name}</div>
                 <IconButton aria-label="Delete" style={{
                     marginLeft: 'auto'
                 }} onClick={() => this.props.delete(todo._id)} >

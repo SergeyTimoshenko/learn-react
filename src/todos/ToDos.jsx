@@ -10,6 +10,7 @@ import Todo from './todo/todo';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import "./todos.css";
+import Task from '../task/task.modal';
 
 import TodosService from '../srvices/todos';
 import TopicService from '../srvices/topic';
@@ -24,7 +25,8 @@ class ToDos extends React.Component {
             isNewColumnInput: false,
             newColumnInput: '',
             topic: props.topic,
-            modal: false
+            modal: false,
+            currentTodo: null
         }
     }
     componentDidMount() {
@@ -77,8 +79,22 @@ class ToDos extends React.Component {
     
     
     onCreateTask = () => {
-        console.log('yay')
+        
         this.setState({
+            modal: true
+        })
+        console.log('yay', this.state.modal)
+    }
+
+    closeModal = () => {
+        this.setState({
+            modal: false
+        })
+    }
+
+    onTodoClick = (todo) => {
+        this.setState({
+            currentTodo: todo,
             modal: true
         })
     }
@@ -127,7 +143,7 @@ class ToDos extends React.Component {
                         {
                             this.state.todos.map((todo, index) => 
                                 <ListItem key={todo._id}>
-                                    <Todo todo={todo} delete={this.onDelete}/>
+                                    <Todo todo={todo} delete={this.onDelete} click={this.onTodoClick} />
                                 </ListItem>
                             )
                         }
@@ -136,22 +152,10 @@ class ToDos extends React.Component {
                         cursor: 'pointer'
                     }} onClick={this.onCreateTask}>Create new task</Link>
                 </Card>
-                <Modal open={this.state.modal} onBackdropClick={() => {this.setState({modal:false})}}
-                    aria-labelledby="simple-modal-title"
-                    aria-describedby="simple-modal-description"
-                >
-                    <div style={{
-                        position:'absolute',
-                        top:200,
-                        width: 300,
-                        left: 'calc(50vw - 150px)'
-                    }}>
-                        <Card>
-                            <p>ggg</p>
-                        </Card> 
-                    </div>
-                    
-                </Modal>
+                {this.state.currentTodo ? (
+                    <Task modal={this.state.modal} closeModal={this.closeModal} todo={this.state.currentTodo} />
+                ):null}
+                
             </div>
         );
     }
