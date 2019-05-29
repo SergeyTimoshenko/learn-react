@@ -6,7 +6,9 @@ class Task extends React.Component {
     constructor(props) {
         super(props)
         console.log(props)
-        this.state = {}
+        this.state = {
+            topic: props.topic
+        }
     }
 
     render() {
@@ -27,6 +29,9 @@ class Task extends React.Component {
                             padding: 20
                         }}>
                             <h3>{this.props.todo.name}</h3>
+                            <h5> <i style={{
+                                color: 'rgb(142, 139, 139)'
+                            }}>in column</i> {this.state.topic.title}</h5>
                         </Card> 
                     </div>
                     

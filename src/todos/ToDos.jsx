@@ -153,7 +153,7 @@ class ToDos extends React.Component {
                     }} onClick={this.onCreateTask}>Create new task</Link>
                 </Card>
                 {this.state.currentTodo ? (
-                    <Task modal={this.state.modal} closeModal={this.closeModal} todo={this.state.currentTodo} />
+                    <Task modal={this.state.modal} closeModal={this.closeModal} todo={this.state.currentTodo} topic={this.state.topic} />
                 ):null}
                 
             </div>
