@@ -3,6 +3,7 @@ import Header from '../header/Header';
 import ToDos from '../todos/ToDos';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Topics from '../topic/Topics';
+import './../style/style.css';
 
 class Root extends React.Component {
     constructor(props) {
