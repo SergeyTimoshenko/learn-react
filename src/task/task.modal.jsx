@@ -19,7 +19,8 @@ class Task extends React.Component {
             todo: props.todo,
             isEditDescription: false,
             isDisabledSave: true,
-            description: ''
+            description: '',
+            comment: ''
         }
     }
     componentDidMount() {
@@ -125,7 +126,22 @@ class Task extends React.Component {
                                         variant="outlined"
                                         id="mui-theme-provider-outlined-input"
                                         style={{marginTop: 20, width: '100%'}}
+                                        value={this.state.comment}
+                                        onChange={(e) => this.setState({comment: e.target.value})}
                                     ></TextField>
+                                    <Button variant="contained" color="primary" disabled={this.state.comment.length === 0} style={{marginTop: 10}}>Save</Button>
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={8} style={{marginTop: 20}}>
+                                <Grid item xs={1}>
+
+                                </Grid>
+                                <Grid item xs={11}>
+                                    <Card style={{padding:10}}>
+                                        <div>
+                                            some
+                                        </div>
+                                    </Card>
                                 </Grid>
                             </Grid>
                         </Card> 
