@@ -30,9 +30,16 @@ class ToDos extends React.Component {
         }
     }
     componentDidMount() {
-        
+        this.refreshTodoList()
+    }
+    refreshTodoList() {
         TodosService.fetchById(this.state.topic._id).then(todos => {
             this.setState({todos})
+            if (!this.state.currentTodo) return
+            let currentTodo = todos.filter(todo => todo._id === this.state.currentTodo._id)[0]
+            if(currentTodo) {
+                this.setState({currentTodo});
+            }
         })
     }
     onAddTodo = (topic) => {
@@ -43,11 +50,11 @@ class ToDos extends React.Component {
             this.setState({
                 input: '',
                 todos: [
+                    ...this.state.todos,
                     {
                         _id: res._id,
                         name: res.name
-                    },
-                    ...this.state.todos
+                    }
                 ]
             })
         })
@@ -88,7 +95,8 @@ class ToDos extends React.Component {
 
     closeModal = () => {
         this.setState({
-            modal: false
+            modal: false,
+            currentTodo: null
         })
     }
 
@@ -96,6 +104,21 @@ class ToDos extends React.Component {
         this.setState({
             currentTodo: todo,
             modal: true
+        })
+    }
+
+    onSaveDescription = description => {
+        TodosService.update(this.state.currentTodo._id, {
+            description
+        }).then(res => {
+            // this.props.refreshList()
+            this.setState({
+                todos: this.state.todos.map(i => {
+                    if (i._id === this.state.currentTodo._id)
+                        i.description = description;
+                    return i;
+                })
+            })
         })
     }
 
@@ -148,12 +171,9 @@ class ToDos extends React.Component {
                             )
                         }
                     </List>
-                    <Link style={{
-                        cursor: 'pointer'
-                    }} onClick={this.onCreateTask}>Create new task</Link>
                 </Card>
                 {this.state.currentTodo ? (
-                    <Task modal={this.state.modal} closeModal={this.closeModal} todo={this.state.currentTodo} topic={this.state.topic} />
+                    <Task onSaveDescription={this.onSaveDescription} modal={this.state.modal} closeModal={this.closeModal} todo={this.state.currentTodo} topic={this.state.topic} refreshList={()=> this.refreshTodoList()} />
                 ):null}
                 
             </div>

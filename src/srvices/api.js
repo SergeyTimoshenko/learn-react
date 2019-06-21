@@ -18,10 +18,15 @@ const del = (path) => {
     return axios.delete(`${API}/${path}`)
 }
 
+const update = (path, data) => {
+    return axios.patch(`${API}/${path}`, data);
+}
+
 const api = {
     post,
     get,
     put,
-    del
+    del,
+    update
 }
 export default api; 

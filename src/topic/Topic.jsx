@@ -89,9 +89,7 @@ class Topic extends React.Component {
                     )
                 }
                 
-                <ToDos topic={this.state.topic}>
-
-                </ToDos>
+                <ToDos topic={this.state.topic} />
                 </Card>
                 
             </div>

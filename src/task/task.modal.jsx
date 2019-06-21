@@ -8,27 +8,42 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
+import TodoService from '../srvices/todos';
+
 class Task extends React.Component {
     constructor(props) {
         super(props)
         console.log(props)
         this.state = {
             topic: props.topic,
+            todo: props.todo,
             isEditDescription: false,
-            isDisabledSave: true
+            isDisabledSave: true,
+            description: ''
         }
+    }
+    componentDidMount() {
+        TodoService.fetchByToDoId(this.state.todo._id).then(res => {
+            this.setState({
+                description:res.description
+            })
+        })
     }
     onEditDescription = () => {
         this.setState({isEditDescription: true, isDisabledSave: false})
     }
     onBlurDescription = () => {
         setTimeout(() => {
-            this.setState({isEditDescription: false, isDisabledSave: true})
+            this.setState({isEditDescription: false, isDisabledSave: true, description: this.state.todo.description})
         }, 200)
     }
-    onSaveDescription = () => {
-        console.log('yay')
-    }
+    // onSaveDescription = () => {
+    //     TodoService.update(this.state.todo._id, {
+    //         description: this.state.description
+    //     }).then(res => {
+    //         this.props.refreshList()
+    //     })
+    // }
     resetMargin = {
         margin: 0
     }
@@ -73,12 +88,13 @@ class Task extends React.Component {
                                                 variant="outlined"
                                                 id="mui-theme-provider-outlined-input"
                                                 style={{marginTop: 20, width: '100%'}}
-                                                
+                                                onChange={(e)=>this.setState({description:e.target.value})}
+                                                value={this.state.description}
                                             ></TextField>
                                         ) : (
                                             <Paper className="card-descroption" onClick={this.onEditDescription}>
-                                                <Typography component="p">
-                                                    Some description
+                                                <Typography component="p" style={{whiteSpace: 'pre-line'}}>
+                                                    {this.state.todo.description === '' ? 'Enter a description' : this.state.todo.description}
                                                 </Typography>
                                             </Paper>
                                         )
@@ -88,7 +104,9 @@ class Task extends React.Component {
                                         marginTop:10,
                                     }}
                                     disabled={this.state.isDisabledSave}
-                                    onClick={this.onSaveDescription}
+                                    onClick={() => {
+                                        this.props.onSaveDescription(this.state.description)
+                                    }}
                                     >
                                         save
                                     </Button>
@@ -110,7 +128,6 @@ class Task extends React.Component {
                                     ></TextField>
                                 </Grid>
                             </Grid>
-                            
                         </Card> 
                     </div> 
                 </Modal>
