@@ -34,19 +34,31 @@ class Header extends React.Component {
                             <Link to="/" style={{
                                 textDecoration: 'none',
                             }}>
-                                <Button variant="outlined" style={{color: '#fff'}} onClick={() => this.setState({name: 'Home'})}>
+                                <Button variant="outlined" style={{color: '#fff'}} onClick={() => {
+                                    this.setState({name: 'Home'})
+                                    this.props.push('/')
+                                }}>
                                     Home
                                 </Button>
                             </Link>
                             
                         </ListItem>
                         <ListItem>
-                        <Link to="/todo" style={{
-                                textDecoration: 'none'
-                            }}>
-                                <Button variant="outlined" style={{color: '#fff'}} onClick={() =>  this.setState({name: 'ToDo'})}>
-                                    todo
-                                </Button>
+                            <Link to="/todo" style={{
+                                    textDecoration: 'none'
+                                }}>
+                                    <Button variant="outlined" style={{color: '#fff'}} onClick={() =>  {this.setState({name: 'ToDo'}); this.props.push('/todo')}}>
+                                        todo
+                                    </Button>
+                            </Link>
+                        </ListItem>
+                        <ListItem>
+                            <Link to="/tetris" style={{
+                                    textDecoration: 'none'
+                                }}>
+                                    <Button variant="outlined" style={{color: '#fff'}} onClick={() =>  {this.setState({name: 'Tetris'}); this.props.push('/tetris')}}>
+                                        tetris
+                                    </Button>
                             </Link>
                         </ListItem>
                     </List>

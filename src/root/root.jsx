@@ -1,9 +1,9 @@
 import React from 'react';
 import Header from '../header/Header';
-import ToDos from '../todos/ToDos';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Topics from '../topic/Topics';
 import './../style/style.css';
+import Tetris from '../tetris/main';
 
 class Root extends React.Component {
     constructor(props) {
@@ -21,7 +21,6 @@ class Root extends React.Component {
       }
       
       nav = (to) => {
-          console.log(to)
        this.setState({
          name: to
        })
@@ -41,6 +40,7 @@ class Root extends React.Component {
             <Switch>
               <Route path="/" exact component={this.Home}/>
               <Route path="/todo" component={Topics} />
+              <Route path="/tetris" component={Tetris} />
             </Switch>
           </div>
         );

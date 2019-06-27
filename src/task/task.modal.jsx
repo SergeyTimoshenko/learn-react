@@ -9,11 +9,11 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import TodoService from '../srvices/todos';
+import CommentService from '../srvices/comment';
 
 class Task extends React.Component {
     constructor(props) {
         super(props)
-        console.log(props)
         this.state = {
             topic: props.topic,
             todo: props.todo,
@@ -29,6 +29,7 @@ class Task extends React.Component {
                 description:res.description
             })
         })
+        CommentService.getByTodoId(this.props.todo._id).then(comments => this.setState({todo: {...this.state.todo, comments}}))
     }
     onEditDescription = () => {
         this.setState({isEditDescription: true, isDisabledSave: false})
@@ -38,13 +39,13 @@ class Task extends React.Component {
             this.setState({isEditDescription: false, isDisabledSave: true, description: this.state.todo.description})
         }, 200)
     }
-    // onSaveDescription = () => {
-    //     TodoService.update(this.state.todo._id, {
-    //         description: this.state.description
-    //     }).then(res => {
-    //         this.props.refreshList()
-    //     })
-    // }
+
+    commnetAdd = () => {
+        CommentService.create({text: this.state.comment, todoId: this.props.todo._id}).then(comment => {
+            this.setState({todo: {...this.state.todo, comments: [...this.state.todo.comments, comment]}})
+        })
+    }
+
     resetMargin = {
         margin: 0
     }
@@ -129,19 +130,29 @@ class Task extends React.Component {
                                         value={this.state.comment}
                                         onChange={(e) => this.setState({comment: e.target.value})}
                                     ></TextField>
-                                    <Button variant="contained" color="primary" disabled={this.state.comment.length === 0} style={{marginTop: 10}}>Save</Button>
+                                    <Button 
+                                        variant="contained" 
+                                        color="primary" 
+                                        disabled={this.state.comment.length === 0} 
+                                        style={{marginTop: 10}}
+                                        onClick={this.commnetAdd}
+                                    >Save</Button>
                                 </Grid>
                             </Grid>
-                            <Grid container spacing={8} style={{marginTop: 20}}>
+                            <Grid container spacing={8} >
                                 <Grid item xs={1}>
 
                                 </Grid>
                                 <Grid item xs={11}>
-                                    <Card style={{padding:10}}>
-                                        <div>
-                                            some
-                                        </div>
-                                    </Card>
+                                    {this.state.todo.comments ? this.state.todo.comments.map(comment => 
+                                        (
+                                            <Card style={{padding:10, marginTop: 20}} key={comment._id}>
+                                                <div>
+                                                    {comment.text}
+                                                </div>
+                                            </Card>
+                                        )
+                                    ) : null}
                                 </Grid>
                             </Grid>
                         </Card> 

@@ -5,15 +5,11 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
-import Link from '@material-ui/core/Link';
 import Todo from './todo/todo';
-import Modal from '@material-ui/core/Modal';
-import Typography from '@material-ui/core/Typography';
 import "./todos.css";
 import Task from '../task/task.modal';
 
 import TodosService from '../srvices/todos';
-import TopicService from '../srvices/topic';
 
 class ToDos extends React.Component {
     constructor(props) {
