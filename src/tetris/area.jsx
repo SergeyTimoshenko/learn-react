@@ -23,16 +23,63 @@ class Area extends React.Component {
     }
 
     start() {
-        this.live()
+        if (!this.state.interval) this.live()
     }
     stop() {
         clearInterval(this.state.interval)
+        this.setState({interval: null})
+    }
+    downChecker(rowId, colId) {
+        if (this.state.rows[rowId + 1].col[colId].is === false) {
+            return false
+        }
+        
+        let count = this.state.rows.filter(r => {
+            if (r.col.filter(c => {
+                if (c.id === colId && c.is) return true
+            }).length) return true
+        }).length
+        
+        if (19 - rowId - count < 0) {
+            return true
+        }
+        return false
     }
     live() {
-        this.setState({interval: setInterval(() =>{
-            if (this.figure === 'block') {
-                
-            }
+        this.setState({interval: setInterval(() => {
+            
+            let cols = []
+            this.state.rows[0].col.map(col => cols.push(false))
+            this.setState({rows: this.state.rows.map(row => {
+                let newRow;
+            
+                if (cols.length) {
+                    newRow = {...row, col:row.col.map(col => {
+                        if (!cols[col.id] && col.is && this.state.rows.length - 1 !== row.id && this.downChecker(row.id, col.id)) {
+                            return {...col, is: true}
+                        }
+                        return {...col, is: cols[col.id]}
+                    })}
+                    cols = []
+                    
+                    row.col.map(col => {
+
+                        if (row.id === 18 && this.state.rows[row.id + 1].col[col.id].is) {
+                            cols.push({...col, is: true})
+                            return
+                        }
+
+                        cols.push(col.is)
+                    })
+                    
+                    return newRow
+                }
+                newRow = {...row, col: row.col.map(col => {
+                    cols.push(col.is)
+                    return col
+                })}
+                return newRow
+            })})
         }, 500)})
     }
     clicker (rowId, colId) {
@@ -41,7 +88,7 @@ class Area extends React.Component {
                 if (row.id !== rowId) return row
                 return {...row, col:row.col.map(col => {
                     if (col.id !== colId) return col
-                    col = {...col, is: true}
+                    col = {...col, is: !col.is}
                     return col
                 })}
             })
