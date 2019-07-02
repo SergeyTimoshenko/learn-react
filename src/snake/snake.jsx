@@ -14,7 +14,8 @@ class Snake extends React.Component {
             apple: {x:3, y:3},
             width: 10,
             height: 19,
-            score: 0
+            score: 0,
+            isBonus: false
         }
         this.renderSnake(true)
         this.renderApple(true)
@@ -62,14 +63,14 @@ class Snake extends React.Component {
         if (is) return
         this.setState({area})
     }
-    renderApple(is = false, isBonus = false) {
+    renderApple(is = false) {
         const apple = this.state.apple
 
         if (this.state.snake.coords.filter(coord => coord.x === apple.x && coord.y === apple.y).length) {
-            this.randomApple(is, isBonus)
+            this.randomApple(is)
         } else {
             let area = this.state.area
-            if (isBonus) {
+            if (this.state.isBonus) {
                 area[apple.y][apple.x] = 3
             } else {
                 area[apple.y][apple.x] = 2
@@ -79,15 +80,11 @@ class Snake extends React.Component {
             this.setState({area})
         }
     }
-    randomApple(isBonus = false) {
+    randomApple() {
         const getInt = (min, max) => Math.floor(Math.random() * (+max - +min)) + +min; 
         this.setState({apple: {x: getInt(0, this.state.width), y: getInt(0, this.state.height)}})
-        if (isBonus) {
-            this.renderApple(false, true)
-        } else {
-            this.renderApple(false, false)
-        }
         
+        this.renderApple()
     }
     start() {
         if (this.state.interval) return 
@@ -107,13 +104,10 @@ class Snake extends React.Component {
         const head = this.state.snake.coords[0]
 
         if (apple.x === head.x && apple.y === head.y) {
-            console.log(this.state.area[apple.y][apple.y])
-            let bonus = this.scoreUpdater()
-            if (bonus) {
-                this.randomApple(true)
-            } else {
-                this.randomApple()
-            }
+            this.scoreUpdater()
+            
+            this.randomApple()
+            
             return true
         }
         return false
@@ -252,6 +246,7 @@ class Snake extends React.Component {
         }
         
         this.renderSnake()
+        
         if (this.checkApple()) {
             this.snakeAge(lastDot)
             this.renderSnake()
@@ -261,8 +256,12 @@ class Snake extends React.Component {
         
     }
     scoreUpdater() {
-        this.setState({score:this.state.snake.coords.length - 5})
-        return this.state.score / 5 % 1 === 0
+        const isBonus = this.state.score / 10 % 1 === 0
+        let score = this.state.score + 1
+        if (this.state.isBonus) {
+            score += 2
+        }
+        this.setState({score, isBonus})
     }
     clicker(rowId, colId) {
         this.setState({
