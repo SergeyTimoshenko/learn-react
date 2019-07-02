@@ -15,7 +15,8 @@ class Snake extends React.Component {
             width: 10,
             height: 19,
             score: 0,
-            isBonus: false
+            isBonus: false,
+            best: localStorage.getItem('score')
         }
         this.renderSnake(true)
         this.renderApple(true)
@@ -116,6 +117,7 @@ class Snake extends React.Component {
         this.setState({snake: {...this.state.snake, coords: [...this.state.snake.coords, last]}})
     }
     checkSelf(nextPos) {
+        this.scoreSaver()
         return this.state.snake.coords.filter(coord => coord.x === nextPos.x && coord.y === nextPos.y).length > 0
     }
     moveleft() {
@@ -158,6 +160,7 @@ class Snake extends React.Component {
         let coords = this.state.snake.coords
         if (this.checkSelf({...snakeHead, x: snakeHead.x + 1})) {
             this.stop()
+            
             return
         }
         if (snakeBodyLength === snakeLength) {
@@ -292,6 +295,12 @@ class Snake extends React.Component {
             this.renderApple()
         })
     }
+    scoreSaver() {
+        if (localStorage.getItem('score') < this.state.score) {
+            localStorage.setItem('score', this.state.score)
+        }
+        this.setState({best:localStorage.getItem('score')})
+    }
     onWidthChange(e) {
         this.setState({width: e.target.value})
     }
@@ -323,14 +332,14 @@ class Snake extends React.Component {
                     <div key={rowId} style={{
                         width: '100%',
                         height: 20,
-                        border: '1px solid transperent',
+                        border: '1px solid transparent',
                         display: 'flex'
                     }}>
                         {row.map((col, colId) => (
                             <div key={colId} style={{
                                 height: 20,
                                 width: 20,
-                                border: '1px solid transperent',
+                                border: '1px solid transparent',
                                 backgroundColor: this.color(col)
                             }}
                            
@@ -349,6 +358,9 @@ class Snake extends React.Component {
                 </div>
                 <div>
                     Score: {this.state.score}
+                </div>
+                <div>
+                    Best: {this.state.best}
                 </div>
                 <div>
                     <label htmlFor="width">Width</label>
