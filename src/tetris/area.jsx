@@ -45,11 +45,16 @@ class Area extends React.Component {
         }
         return false
     }
+    renderStoper() {
+        
+    }
     live() {
         this.setState({interval: setInterval(() => {
             
             let cols = []
+
             this.state.rows[0].col.map(col => cols.push(false))
+
             this.setState({rows: this.state.rows.map(row => {
                 let newRow;
             

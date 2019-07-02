@@ -61,6 +61,15 @@ class Header extends React.Component {
                                     </Button>
                             </Link>
                         </ListItem>
+                        <ListItem>
+                            <Link to="/snake" style={{
+                                    textDecoration: 'none'
+                                }}>
+                                    <Button variant="outlined" style={{color: '#fff'}} onClick={() =>  {this.setState({name: 'Snake'}); this.props.push('/snake')}}>
+                                        snake
+                                    </Button>
+                            </Link>
+                        </ListItem>
                     </List>
                 </Toolbar>
             </AppBar>

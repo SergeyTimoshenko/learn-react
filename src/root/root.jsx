@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Topics from '../topic/Topics';
 import './../style/style.css';
 import Tetris from '../tetris/main';
+import Snake from '../snake/snake';
 
 class Root extends React.Component {
     constructor(props) {
@@ -12,6 +13,12 @@ class Root extends React.Component {
         switch (props.location.pathname) {
             case '/todo':
                 name = 'ToDo'
+                break;
+            case '/tetris':
+                name = 'Tetris'
+                break;
+            case '/snake':
+                name = 'Snake'
                 break;
             default:
                 name = 'Home';
@@ -41,6 +48,7 @@ class Root extends React.Component {
               <Route path="/" exact component={this.Home}/>
               <Route path="/todo" component={Topics} />
               <Route path="/tetris" component={Tetris} />
+              <Route path="/snake" component={Snake} />
             </Switch>
           </div>
         );
