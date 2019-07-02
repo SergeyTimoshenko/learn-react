@@ -1,41 +1,24 @@
 import React from 'react'
 
+
 class Snake extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            area: [
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-            ],
+            area: this.renderArea(),
             interval: null,
             snake: {
                 coords: [{x:5,y:10},{x:6,y:10},{x:7,y:10},{x:7,y:11}, {x:7,y:12}]
             },
             way: 'left',
-            apple: {x:3, y:3}
+            apple: {x:3, y:3},
+            width: 10,
+            height: 19,
+            score: 0
         }
         this.renderSnake(true)
         this.renderApple(true)
-        console.log(this.state.area)
+        
     }
     componentDidMount() {
         document.addEventListener('keypress', (e) => {
@@ -57,6 +40,19 @@ class Snake extends React.Component {
             }
         })
     }
+    renderArea() {
+        const area = []
+        const height = this.state ? this.state.height : 19
+        const width = this.state ? this.state.width : 10
+
+        for(let i = 0; i <= height; i++) {
+            area.push([])
+            for (let a = 0; a <= width; a++) {
+                area[i].push(0)
+            }
+        }
+        return area
+    }
     renderSnake(is = false) {
         let area = this.state.area;
         const {coords} = this.state.snake
@@ -66,23 +62,32 @@ class Snake extends React.Component {
         if (is) return
         this.setState({area})
     }
-    renderApple(is = false) {
+    renderApple(is = false, isBonus = false) {
         const apple = this.state.apple
 
         if (this.state.snake.coords.filter(coord => coord.x === apple.x && coord.y === apple.y).length) {
-            this.randomApple()
+            this.randomApple(is, isBonus)
         } else {
             let area = this.state.area
-            area[apple.y][apple.x] = 2
+            if (isBonus) {
+                area[apple.y][apple.x] = 3
+            } else {
+                area[apple.y][apple.x] = 2
+            }
+            
             if (is) return
             this.setState({area})
         }
     }
-    randomApple() {
+    randomApple(isBonus = false) {
         const getInt = (min, max) => Math.floor(Math.random() * (+max - +min)) + +min; 
-        this.setState({apple: {x: getInt(0, 9), y: getInt(0, 19)}})
-
-        this.renderApple()
+        this.setState({apple: {x: getInt(0, this.state.width), y: getInt(0, this.state.height)}})
+        if (isBonus) {
+            this.renderApple(false, true)
+        } else {
+            this.renderApple(false, false)
+        }
+        
     }
     start() {
         if (this.state.interval) return 
@@ -102,7 +107,13 @@ class Snake extends React.Component {
         const head = this.state.snake.coords[0]
 
         if (apple.x === head.x && apple.y === head.y) {
-            this.randomApple()
+            console.log(this.state.area[apple.y][apple.y])
+            let bonus = this.scoreUpdater()
+            if (bonus) {
+                this.randomApple(true)
+            } else {
+                this.randomApple()
+            }
             return true
         }
         return false
@@ -141,7 +152,8 @@ class Snake extends React.Component {
         this.setState({snake: {...this.state.snake, coords}})
     }
     moveright() {
-        if (this.state.snake.coords[0].x === 9) {
+        
+        if (this.state.snake.coords[0].x === this.state.area[0].length - 1) {
             this.stop()
             return
         }
@@ -195,7 +207,7 @@ class Snake extends React.Component {
         this.setState({snake: {...this.state.snake, coords}})
     }
     movebottom() {
-        if (this.state.snake.coords[0].y === 19) {
+        if (this.state.snake.coords[0].y === this.state.area.length - 1) {
             this.stop()
             return
         }
@@ -245,6 +257,12 @@ class Snake extends React.Component {
             this.renderSnake()
         }
         this.renderApple()
+
+        
+    }
+    scoreUpdater() {
+        this.setState({score:this.state.snake.coords.length - 5})
+        return this.state.score / 5 % 1 === 0
     }
     clicker(rowId, colId) {
         this.setState({
@@ -258,11 +276,47 @@ class Snake extends React.Component {
             })
         })
     }
+    restart() {
+        this.stop()
+        this.setState({
+            area: this.renderArea(),
+            interval: null,
+            snake: {...this.state.snake,
+                coords: [{x:5,y:10},{x:6,y:10},{x:7,y:10},{x:7,y:11}, {x:7,y:12}]
+            },
+            way: 'left',
+            apple: {x:3, y:3}
+        })
+
+        setTimeout(() => {
+            this.renderSnake()
+            this.renderApple()
+        })
+    }
+    onWidthChange(e) {
+        this.setState({width: e.target.value})
+    }
+    onHeightChange(e) {
+        this.setState({height: e.target.value})
+    }
+    color(col) {
+        
+        if (col === 1) {
+            return 'black'
+        }
+        if (col === 3) {
+            return 'red'
+        }
+        if (col === 2) {
+            return 'green'
+        }
+        return '#fff'
+    }
     render(){
         return (
             <div> <div style={{
-                width: 221,
-                height: 441,
+                width: this.state.area[0].length * 22 +1,
+                height: this.state.area.length * 22 +1,
                 border: '1px solid black',
                 margin: '0 auto'
             }}>
@@ -278,8 +332,9 @@ class Snake extends React.Component {
                                 height: 20,
                                 width: 20,
                                 border: '1px solid black',
-                                backgroundColor: col === 1 ? 'black' : col === 2 ? 'green' : '#fff'
+                                backgroundColor: this.color(col)
                             }}
+                           
                             onClick={() => this.clicker(rowId, colId)}
                             ></div>
                         ))}
@@ -287,8 +342,23 @@ class Snake extends React.Component {
                     
                 ))}
             </div>
-                <button onClick={()=>this.start()}>start</button>
-                <button onClick={() => this.stop()}>stop</button>
+                <button onClick={() => this.start() }>start</button>
+                <button onClick={() => this.stop() }>stop</button>
+                <button onClick={() => this.restart() }>restart</button>
+                <div>
+                    Length: {this.state.snake.coords.length}
+                </div>
+                <div>
+                    Score: {this.state.score}
+                </div>
+                <div>
+                    <label htmlFor="width">Width</label>
+                    <input id="width" type="range" min="10" max="100" value={this.state.width} onChange={(e) => this.onWidthChange(e)}/>
+                </div>
+                <div>
+                    <label htmlFor="height">Height</label>
+                    <input id="height" type="range" min="10" max="100" value={this.state.height} onChange={(e) => this.onHeightChange(e)}/>
+                </div>
             </div>
         )
     }
