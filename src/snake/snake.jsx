@@ -323,14 +323,14 @@ class Snake extends React.Component {
                     <div key={rowId} style={{
                         width: '100%',
                         height: 20,
-                        border: '1px solid black',
+                        border: '1px solid transperent',
                         display: 'flex'
                     }}>
                         {row.map((col, colId) => (
                             <div key={colId} style={{
                                 height: 20,
                                 width: 20,
-                                border: '1px solid black',
+                                border: '1px solid transperent',
                                 backgroundColor: this.color(col)
                             }}
                            
