@@ -70,6 +70,15 @@ class Header extends React.Component {
                                     </Button>
                             </Link>
                         </ListItem>
+                        <ListItem>
+                            <Link to="/arcanoid" style={{
+                                    textDecoration: 'none'
+                                }}>
+                                    <Button variant="outlined" style={{color: '#fff'}} onClick={() =>  {this.setState({name: 'Arcanoid'}); this.props.push('/arcanoid')}}>
+                                        arcanoid
+                                    </Button>
+                            </Link>
+                        </ListItem>
                     </List>
                 </Toolbar>
             </AppBar>

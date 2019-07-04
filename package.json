@@ -8,8 +8,10 @@
     "@material-ui/lab": "^4.0.0-alpha.18",
     "@material-ui/styles": "^4.0.2",
     "axios": "^0.18.0",
+    "konva": "^3.3.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-konva": "^16.8.7-3",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1"
   },
