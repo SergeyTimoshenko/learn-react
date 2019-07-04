@@ -79,7 +79,16 @@ class Area extends React.Component {
                     ]
                 }
             ],
-            activeFigure: null,
+            activeFigure: {
+                type: 'block',
+                orientation: 'down',
+                coords: [
+                    {x:4, y:0},
+                    {x:5, y:0},
+                    {x:4, y:1},
+                    {x:5, y:1}
+                ]
+            },
             interval: null
         }
     }
@@ -315,15 +324,18 @@ class Area extends React.Component {
     }
     downFigures(lines) {
         if (!lines.length) return
-        lines = lines.sort().reverse()
+        lines = lines.sort()
+        
         let figuresCoords = []
-        let newCoords = []
+        
         this.state.areaFigures.map(figure => figure.coords.map(coord => figuresCoords.push(coord)))
         let hairPoint = 19;
 
+        let newCoords = [figuresCoords]
+
         lines.map(line => {
             newCoords.push([])
-            figuresCoords.map(coord => {
+            newCoords[newCoords.length -2].map(coord => {
                 if (coord.y < line) {
                     newCoords[newCoords.length -1].push({...coord, y:coord.y+1})
                     return
@@ -331,6 +343,7 @@ class Area extends React.Component {
                 newCoords[newCoords.length -1].push(coord)
             }) 
         })
+        
         this.setState({areaFigures: [{coords:newCoords[newCoords.length -1]}]})
     }
     removeLine() {
@@ -348,7 +361,7 @@ class Area extends React.Component {
             return coord
         }).filter(c => c)
 
-        console.log(lines, figuresCoords)
+        
         
         this.setState({areaFigures: [{coords:figuresCoords}]})
 
@@ -368,6 +381,9 @@ class Area extends React.Component {
                 })
             })
         })
+    }
+    componentWillUnmount() {
+        this.stop()
     }
     render() {
         return (
@@ -394,7 +410,7 @@ class Area extends React.Component {
                 ))}
                 <button onClick={() => this.start()}>start</button>
                 <button onClick={() => this.stop()}>stop</button>
-                <button onClick={() => this.setFigure()}>SetFigure</button>
+                {/* <button onClick={() => this.setFigure()}>SetFigure</button> */}
             </div>
         )
     }

@@ -320,6 +320,9 @@ class Snake extends React.Component {
         }
         return '#fff'
     }
+    componentWillUnmount() {
+        this.stop()
+    }
     render(){
         return (
             <div> <div style={{
