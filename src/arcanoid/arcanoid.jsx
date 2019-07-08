@@ -46,7 +46,10 @@ export default class Arcanoid extends React.Component {
                     x: 250,
                     y: 10
                 }
-            ]
+            ],
+            figureHeight: 10,
+            figureWidth: 40,
+            ballRadius: 10
         }
     }
     componentDidMount() {
@@ -107,13 +110,14 @@ export default class Arcanoid extends React.Component {
     }
     tick(){
         this.dragBall()
+        this.checkFigureExists()
     }
     dragBall() {
         let ball = {...this.state.ball};
         let ballVec = {...this.state.ballVec}
 
         if (ballVec.vertical === 'up') {
-            if (ball.y === 5) {
+            if (this.checkFigure(ball) || ball.y === 5) {
                 ballVec = {...ballVec, vertical: 'down'}
                 ball = {...ball, y: ball.y +1}
             } else {
@@ -147,6 +151,38 @@ export default class Arcanoid extends React.Component {
             }
         }
         this.setState({ball, ballVec})
+    }
+    checkFigure(ball) {
+        const figureHeight = this.state.figureHeight;
+        const figureWidth = this.state.figureWidth;
+        const ballRadius = this.state.ballRadius;
+        const figures = [...this.state.figures];
+        const ballTopDot = ball.y - ballRadius;
+       
+        const currentFigure = figures.filter(figure => {
+            const figureBottomDot = figure.y + figureHeight;
+            const figureRightDot = figure.x + figureWidth;
+            if (ballTopDot === figureBottomDot) {
+                if (ball.x > figure.x && ball.x < figureRightDot) {
+                    return true;
+                }
+            }
+            return false
+        })[0]
+
+        if (currentFigure) {
+            figures.splice(figures.indexOf(currentFigure), 1)
+            this.setState({figures: figures})
+            return true
+        }
+        
+        return false
+    }
+    checkFigureExists() {
+        if (!this.state.figures.length) {
+            this.stop()
+            this.setState({ball:{x:150, y:270}})
+        }
     }
     checkPlant(ball) {
         const plant = {...this.state.plant}
@@ -187,8 +223,8 @@ export default class Arcanoid extends React.Component {
                                     key={k}
                                     x={f.x}
                                     y={f.y}
-                                    width={40}
-                                    height={10}
+                                    width={this.state.figureWidth}
+                                    height={this.state.figureHeight}
                                     fill={this.state.color}
                                     shadowBlur={5}
                                     onClick={this.handleClick}
@@ -212,7 +248,7 @@ export default class Arcanoid extends React.Component {
                             x={this.state.ball.x}
                             y={this.state.ball.y}
                             draggable
-                            radius={10}
+                            radius={this.state.ballRadius}
                             fill={this.state.color}
                             onDragEnd={(e) => {
                                 this.handleClick();
