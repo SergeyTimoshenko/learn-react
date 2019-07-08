@@ -6,6 +6,7 @@ import './../style/style.css';
 import Tetris from '../tetris/main';
 import Snake from '../snake/snake';
 import Arcanoid from '../arcanoid/arcanoid';
+import Shooter from '../shooter/shooter';
 
 class Root extends React.Component {
     constructor(props) {
@@ -23,6 +24,9 @@ class Root extends React.Component {
                 break;
             case '/arcanoid':
                 name = 'Arcanoid'
+                break;
+            case '/shooter':
+                name = 'Shooter'
                 break;
             default:
                 name = 'Home';
@@ -54,6 +58,7 @@ class Root extends React.Component {
               <Route path="/tetris" component={Tetris} />
               <Route path="/snake" component={Snake} />
               <Route path="/arcanoid" component={Arcanoid} />
+              <Route path="/shooter" component={Shooter} />
             </Switch>
           </div>
         );

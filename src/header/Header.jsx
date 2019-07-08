@@ -79,6 +79,15 @@ class Header extends React.Component {
                                     </Button>
                             </Link>
                         </ListItem>
+                        <ListItem>
+                            <Link to="/shooter" style={{
+                                    textDecoration: 'none'
+                                }}>
+                                    <Button variant="outlined" style={{color: '#fff'}} onClick={() =>  {this.setState({name: 'Shooter'}); this.props.push('/shooter')}}>
+                                    shooter
+                                    </Button>
+                            </Link>
+                        </ListItem>
                     </List>
                 </Toolbar>
             </AppBar>
