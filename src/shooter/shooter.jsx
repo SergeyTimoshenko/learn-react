@@ -3,6 +3,7 @@ import { Stage, Layer, Rect, Circle, Text, Shape } from 'react-konva';
 import Konva from 'konva'
 
 let rotationInterval = null
+let enemiesInterval = null
 
 export default class Shooter extends React.Component {
     constructor(props) {
@@ -12,7 +13,10 @@ export default class Shooter extends React.Component {
                 width: 500,
                 height: 500
             },
-            fires: []
+            fires: [],
+            enemies: [],
+            kills: 0,
+            deads: 0
         }
     }
     componentDidMount() {
@@ -33,7 +37,22 @@ export default class Shooter extends React.Component {
             }
         })
         this.tick()
+        enemiesInterval = setInterval(() => {
+            switch(this.getInt(2, 4)) {
+                case 2:
+                    this.setState({enemies: [...this.state.enemies, {x:500, y:this.getInt(0, 500)}]})
+                    break;
+                case 3:
+                    this.setState({enemies: [...this.state.enemies, {x:0, y:this.getInt(0, 500)}]})
+                    break;
+                default:
+                    // console.log('NOT enemy type')
+            }
+            
+            // console.log('new ememy', this.state.enemies)
+        }, 2000)
     }
+    getInt = (min, max) => Math.floor(Math.random() * (+max - +min)) + +min; 
     rotation(pattern) {
         if (rotationInterval) return
         rotationInterval = setInterval(() => {
@@ -51,20 +70,81 @@ export default class Shooter extends React.Component {
         rotationInterval = null
     }
     fire() {
-        console.log(this.state.fire)
-        this.setState({fires: [...this.state.fires, {x: 250, y: 250}]})
+        this.setState({fires: [...this.state.fires, {x: 250, y: 250, k:Math.tan((90 - this.refs.shape.rotation()) * (Math.PI/180)), r: this.refs.shape.rotation()}]})
+    }
+    moveEnemies() {
+        const enemies = [...this.state.enemies];
+        if (!enemies.length) return
+        this.setState({enemies: enemies.map(enemy => {
+            if(enemy.x > 230 && enemy.x < 270) {
+                this.setState({deads: this.state.deads + 1})
+                return false
+            }
+            let x = enemy.x + 1
+            if (enemy.x > 250) {
+                x -= 2
+            }
+            const k = (250 - enemy.y)/(250 - enemy.x)
+            let y = k * (x - 250) + 250                         
+            return {y, x}
+        }).filter(v => v)})
+    }
+    checkFireEnemy() {
+        let fires = [...this.state.fires]
+        let enemies = [...this.state.enemies]
+        
+        let firesLen = fires.length
+        enemies = enemies.filter(enemy => {
+            fires = fires.filter(fire => {
+                let enemyLY = enemy.y - 10
+                let enemyRL = enemy.y + 10
+                if (enemyLY < fire.y && enemyRL > fire.y) {
+                    let enemyLX = enemy.x - 10
+                    let enemyRX = enemy.x + 10
+                    if (enemyLX < fire.x && enemyRX > fire.x) {
+                        this.setState({kills: this.state.kills + 1})
+                        return false
+                    }
+                }
+                return true
+            })
+            if (fires.length !== firesLen) {
+                firesLen = fires.length
+                return false
+            }
+            return true
+        })
+        this.setState({fires, enemies})
+
     }
     moveFire() {
         const fires = [...this.state.fires]
         let newFires = fires.map(fire => {
             if (fire.y < -10) return false;
-            return {...fire, y: fire.y - 1}
+            if (fire.x > 510) return false;
+            if (fire.x < -10) return false;
+            if (fire.y > 510) return false;
+            let x = fire.x + 1
+            if (fire.r > 0) {
+                if (fire.r / Math.round(fire.r / 360) < 360) {
+                    x -= 2
+                }
+            }
+            if (fire.r < 0) {
+                if (fire.r / Math.round(fire.r / 360) > 360) {
+                    x -= 2
+                }
+            }
+            let y = -1 * fire.k * (x - 250) +250
+            return {...fire, x, y}
         }).filter(r => r)
         this.setState({fires: newFires})
     }
     tick() {
         setInterval(() => {
             this.moveFire()
+            this.moveEnemies()
+            this.checkFireEnemy()
         }, 10)
     }
     render() {
@@ -75,12 +155,14 @@ export default class Shooter extends React.Component {
                     {
                         this.state.fires.map((fire, key) => (
                             <Rect
+                                ref={'arrow' + key}
                                 key={key}
                                 x={fire.x}
                                 y={fire.y}
                                 width={2}
                                 height={5}
                                 fill="black"
+                                rotation={fire.r}
                             />
                         ))
                     }
@@ -101,9 +183,22 @@ export default class Shooter extends React.Component {
                         x={250}
                         y={250}
                     />
+                    {
+                        this.state.enemies.map((enemy, key) => (
+                            <Circle 
+                                key={key}
+                                x={enemy.x}
+                                y={enemy.y}
+                                radius={10}
+                                fill="red"
+                            />
+                        ))
+                    }
                     </Layer>
                 </Stage>
                 <button onClick={() => this.rotation()}>rotatin</button>
+                <div>Kills: {this.state.kills}</div>
+                <div>Deads: {this.state.deads}</div>
             </div>
         )
     }
