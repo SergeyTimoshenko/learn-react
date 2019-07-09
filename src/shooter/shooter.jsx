@@ -1,9 +1,50 @@
 import React from 'react'
 import { Stage, Layer, Rect, Circle, Text, Shape, Image } from 'react-konva';
 import Konva from 'konva'
+import useImage from 'use-image';
 
 let rotationInterval = null
 let enemiesInterval = null
+
+const Asteroids = () => {
+    const [image] =  useImage('https://www.pngfind.com/pngs/m/8-85083_asteroid-clipart-png-silhouette-transparent-png.png')
+    return <Image image={image} />;
+}
+
+class Asteroid extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            image: null
+        }
+    }
+    componentDidMount() {
+        this.loadImage()
+    }
+    loadImage = () => {
+        this.image = new window.Image()
+        this.image.src = 'https://png.pngtree.com/element_origin_min_pic/00/00/00/0056a0b4ea2ac7a.jpg'
+        this.image.width = 30
+        this.image.height = 30
+        this.image.addEventListener('load', this.handlerLoad)
+    }
+    handlerLoad = () => {
+        this.setState({
+            image: this.image
+        })
+    }
+
+    render() {
+        return (
+            <Image 
+                x={this.props.x -15}
+                y={this.props.y -15}
+                // offset={{x:this.props.x - 15, y:this.props.y - 15}}
+                image={this.state.image}
+            />
+        )
+    }
+}
 
 export default class Shooter extends React.Component {
     constructor(props) {
@@ -150,39 +191,8 @@ export default class Shooter extends React.Component {
     render() {
         return (
             <div style={{margin: '0 auto', width: this.state.area.width + 2, height: this.state.area.height + 2}}>
-                <Stage width={this.state.area.width} height={this.state.area.height} style={{border: '1px solid black'}}>
+                <Stage width={this.state.area.width} height={this.state.area.height} style={{border: '1px solid black', backgroundColor:'#f6f6f6'}}>
                     <Layer>
-                    {
-                        this.state.fires.map((fire, key) => (
-                            <Rect
-                                ref={'arrow' + key}
-                                key={key}
-                                x={fire.x}
-                                y={fire.y}
-                                width={2}
-                                height={5}
-                                fill="black"
-                                rotation={fire.r}
-                            />
-                        ))
-                    }
-                    <Shape
-                        ref="shape"
-                        sceneFunc={(context, shape) => {
-                            context.beginPath();
-                            context.moveTo(0, -10);
-                            context.lineTo(15, 30);
-                            context.lineTo(-15, 30);
-                            context.closePath();
-                            context.fillStrokeShape(shape);
-                        }}
-                        fill="black"
-                        stroke="black"
-                        strokeWidth={4}
-                        offset={{x:0, y:10}}
-                        x={250}
-                        y={250}
-                    />
                     {
                         this.state.enemies.map((enemy, key) => (
                             // <Shape
@@ -216,15 +226,51 @@ export default class Shooter extends React.Component {
                             //         context.fillStrokeShape(shape)
                             //     }}
                             // />
-                            <Circle 
+                            // <Circle 
+                            //     key={key}
+                            //     x={enemy.x}
+                            //     y={enemy.y}
+                            //     radius={10}
+                            //     fill="red"
+                            // />
+                            <Asteroid 
                                 key={key}
                                 x={enemy.x}
                                 y={enemy.y}
-                                radius={10}
-                                fill="red"
                             />
                         ))
                     }
+                    {
+                        this.state.fires.map((fire, key) => (
+                            <Rect
+                                ref={'arrow' + key}
+                                key={key}
+                                x={fire.x}
+                                y={fire.y}
+                                width={2}
+                                height={5}
+                                fill="black"
+                                rotation={fire.r}
+                            />
+                        ))
+                    }
+                    <Shape
+                        ref="shape"
+                        sceneFunc={(context, shape) => {
+                            context.beginPath();
+                            context.moveTo(0, -10);
+                            context.lineTo(15, 30);
+                            context.lineTo(-15, 30);
+                            context.closePath();
+                            context.fillStrokeShape(shape);
+                        }}
+                        fill="black"
+                        stroke="black"
+                        strokeWidth={4}
+                        offset={{x:0, y:10}}
+                        x={250}
+                        y={250}
+                    />
                     </Layer>
                 </Stage>
                 <button onClick={() => this.rotation()}>rotatin</button>
