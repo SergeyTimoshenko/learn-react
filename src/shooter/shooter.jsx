@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stage, Layer, Rect, Circle, Text, Shape } from 'react-konva';
+import { Stage, Layer, Rect, Circle, Text, Shape, Image } from 'react-konva';
 import Konva from 'konva'
 
 let rotationInterval = null
@@ -185,6 +185,37 @@ export default class Shooter extends React.Component {
                     />
                     {
                         this.state.enemies.map((enemy, key) => (
+                            // <Shape
+                            //     key={key}
+                            //     x={enemy.x}
+                            //     y={enemy.y}
+                            //     radius={10}
+                            //     fill="red"
+                            //     stroke="red"
+                            //     strokeWidth={1}
+                            //     offset={{x:enemy.x, y:enemy.y}}
+                            //     sceneFunc={(context, shape) => {
+                            //         context.beginPath()
+
+                            //         context.moveTo(0 + enemy.x, -10 + enemy.y)
+
+                            //         for(let i = 0; i <= 10; i++) {
+                            //             context.lineTo(0 + enemy.x + i, -10 + enemy.y + i)
+                            //         }
+                            //         for(let i = 0; i <= 10; i++) {
+                            //             context.lineTo(10 + enemy.x - i, 0 + enemy.y + i)
+                            //         }
+
+                            //         for(let i = 0; i <= 10; i++) {
+                            //             context.lineTo(0 + enemy.x - i, 10 + enemy.y - i)
+                            //         }
+                            //         for(let i = 0; i <= 10; i++) {
+                            //             context.lineTo(-10 + enemy.x - i, 0 + enemy.y - i)
+                            //         }
+                            //         context.closePath()
+                            //         context.fillStrokeShape(shape)
+                            //     }}
+                            // />
                             <Circle 
                                 key={key}
                                 x={enemy.x}
