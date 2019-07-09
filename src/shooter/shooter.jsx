@@ -1,15 +1,11 @@
 import React from 'react'
 import { Stage, Layer, Rect, Circle, Text, Shape, Image } from 'react-konva';
 import Konva from 'konva'
-import useImage from 'use-image';
 
 let rotationInterval = null
 let enemiesInterval = null
-
-const Asteroids = () => {
-    const [image] =  useImage('https://www.pngfind.com/pngs/m/8-85083_asteroid-clipart-png-silhouette-transparent-png.png')
-    return <Image image={image} />;
-}
+let planetInterval = null
+let globalInterval = null
 
 class Asteroid extends React.Component {
     constructor(props) {
@@ -39,7 +35,38 @@ class Asteroid extends React.Component {
             <Image 
                 x={this.props.x -15}
                 y={this.props.y -15}
-                // offset={{x:this.props.x - 15, y:this.props.y - 15}}
+                image={this.state.image}
+            />
+        )
+    }
+}
+
+class Planet extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            image: null
+        }
+    }
+    componentDidMount() {
+
+    }
+    loadImage = () => {
+        this.image = new window.Image()
+        this.image.src = 'https://images.vexels.com/media/users/3/152536/isolated/preview/401b51c3a9098f12b566121c92009877-mars-planet-icon-by-vexels.png'
+        this.image.width = 50
+        this.image.height = 50
+        this.image.addEventListener('load', this.handler)
+    }
+    handler = () => {
+        const image = this.image;
+        this.setState({image})
+    }
+    render() {
+        return (
+            <Image 
+                x={this.props.x}
+                y={this.props.y}
                 image={this.state.image}
             />
         )
@@ -56,6 +83,7 @@ export default class Shooter extends React.Component {
             },
             fires: [],
             enemies: [],
+            planets: [],
             kills: 0,
             deads: 0
         }
@@ -77,7 +105,9 @@ export default class Shooter extends React.Component {
                 this.stopRotation()
             }
         })
-        this.tick()
+        this.start()
+    }
+    enemiesGenerator() {
         enemiesInterval = setInterval(() => {
             switch(this.getInt(2, 4)) {
                 case 2:
@@ -93,7 +123,12 @@ export default class Shooter extends React.Component {
             // console.log('new ememy', this.state.enemies)
         }, 2000)
     }
-    getInt = (min, max) => Math.floor(Math.random() * (+max - +min)) + +min; 
+    planetGenerator() {
+        planetInterval = setInterval(() => {
+            this.setState({planets: [...this.state.planets, {x:0, y:0}]})
+        }, 15000)
+    }
+    getInt = (min, max) => Math.floor(Math.random() * (+max - +min)) + +min;
     rotation(pattern) {
         if (rotationInterval) return
         rotationInterval = setInterval(() => {
@@ -181,18 +216,81 @@ export default class Shooter extends React.Component {
         }).filter(r => r)
         this.setState({fires: newFires})
     }
+    movePlanet() {
+        let planets = [...this.state.planets]
+        if (!planets.length) return
+        this.checkPlanetFire()
+        planets = planets.map(planet => {
+            if (planet.y < -50) return false
+            let x = planet.x += 1
+            let k = (250 - planet.x) / (250 + planet.y)
+            let y = k * x * 2.8
+            return {x, y}
+        }).filter(v => v)
+        this.setState({planets})
+    }
+    checkPlanetFire() {
+        let planets = [...this.state.planets]
+        let fires = [...this.state.fires]
+
+        planets.map(planet => {
+            fires.map(fire => {
+                let enemyLY = planet.y - 25
+                let enemyRL = planet.y + 25
+                if (enemyLY < fire.y && enemyRL > fire.y) {
+                    let enemyLX = planet.x - 25
+                    let enemyRX = planet.x + 25
+                    if (enemyLX < fire.x && enemyRX > fire.x) {
+                        this.stop()
+                    }
+                }
+                return true
+            })
+        })
+    }
     tick() {
-        setInterval(() => {
+        globalInterval = setInterval(() => {
             this.moveFire()
             this.moveEnemies()
             this.checkFireEnemy()
+            this.movePlanet()
         }, 10)
+    }
+    stop() {
+        clearInterval(globalInterval)
+        clearInterval(enemiesInterval)
+        clearInterval(planetInterval)
+        globalInterval = null
+        enemiesInterval = null
+        planetInterval = null
+    }
+    start() {
+        if (globalInterval) return
+        this.tick()
+        this.enemiesGenerator()
+        this.planetGenerator()
     }
     render() {
         return (
             <div style={{margin: '0 auto', width: this.state.area.width + 2, height: this.state.area.height + 2}}>
                 <Stage width={this.state.area.width} height={this.state.area.height} style={{border: '1px solid black', backgroundColor:'#f6f6f6'}}>
                     <Layer>
+                    {
+                        this.state.planets.map((planet, key) => (
+                            <Circle 
+                                key={key}
+                                x={planet.x}
+                                y={planet.y}
+                                radius={25}
+                                fill="red"
+                            />
+                            // <Planet 
+                            //     key={key}
+                            //     x={planet.x}
+                            //     y={planet.y}
+                            // />
+                        ))
+                    }
                     {
                         this.state.enemies.map((enemy, key) => (
                             // <Shape
@@ -273,9 +371,10 @@ export default class Shooter extends React.Component {
                     />
                     </Layer>
                 </Stage>
-                <button onClick={() => this.rotation()}>rotatin</button>
+                <button onClick={() => this.stop()}>Stop</button>
+                <button onClick={() => this.start()}>Start</button>
                 <div>Kills: {this.state.kills}</div>
-                <div>Deads: {this.state.deads}</div>
+                <div>Deaths: {this.state.deads}</div>
             </div>
         )
     }
